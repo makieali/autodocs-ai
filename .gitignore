@@ -20,8 +20,12 @@ env/
 *.swo
 *~
 
-# Environment
+# Environment & Credentials
 .env
+credentials.md
+credentials.*
+*.pem
+*.key
 
 # Output
 output/

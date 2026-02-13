@@ -15,77 +15,77 @@ from autodocs_ai.providers.ollama_provider import OllamaProvider
 
 
 def _make_settings(**kwargs) -> Settings:
-    """Create settings with defaults for testing."""
-    defaults = {
-        "AUTODOCS_PROVIDER": "openai",
-        "OPENAI_API_KEY": "test-key",
+    """Create settings with defaults for testing (ignores .env file)."""
+    defaults: dict = {
+        "provider": "openai",
+        "openai_api_key": "test-key",
     }
     defaults.update(kwargs)
-    return Settings(**defaults)
+    return Settings(_env_file=None, **defaults)
 
 
 class TestGetProvider:
     def test_returns_openai_provider(self):
-        settings = _make_settings(AUTODOCS_PROVIDER="openai")
+        settings = _make_settings(provider="openai")
         provider = get_provider(settings)
         assert isinstance(provider, OpenAIProvider)
 
     def test_returns_anthropic_provider(self):
-        settings = _make_settings(AUTODOCS_PROVIDER="anthropic")
+        settings = _make_settings(provider="anthropic")
         provider = get_provider(settings)
         assert isinstance(provider, AnthropicProvider)
 
     def test_returns_gemini_provider(self):
-        settings = _make_settings(AUTODOCS_PROVIDER="gemini")
+        settings = _make_settings(provider="gemini")
         provider = get_provider(settings)
         assert isinstance(provider, GeminiProvider)
 
     def test_returns_azure_provider(self):
-        settings = _make_settings(AUTODOCS_PROVIDER="azure")
+        settings = _make_settings(provider="azure")
         provider = get_provider(settings)
         assert isinstance(provider, AzureProvider)
 
     def test_returns_ollama_provider(self):
-        settings = _make_settings(AUTODOCS_PROVIDER="ollama")
+        settings = _make_settings(provider="ollama")
         provider = get_provider(settings)
         assert isinstance(provider, OllamaProvider)
 
     def test_all_providers_are_ai_provider(self):
         for name in ProviderName:
-            settings = _make_settings(AUTODOCS_PROVIDER=name.value)
+            settings = _make_settings(provider=name.value)
             provider = get_provider(settings)
             assert isinstance(provider, AIProvider)
 
 
 class TestProviderValidation:
     def test_openai_requires_api_key(self):
-        settings = _make_settings(OPENAI_API_KEY="")
+        settings = _make_settings(openai_api_key="")
         provider = OpenAIProvider(settings)
         with pytest.raises(ValueError, match="API key"):
             provider.validate_config()
 
     def test_anthropic_requires_api_key(self):
-        settings = _make_settings(ANTHROPIC_API_KEY="")
+        settings = _make_settings(anthropic_api_key="")
         provider = AnthropicProvider(settings)
         with pytest.raises(ValueError, match="API key"):
             provider.validate_config()
 
     def test_gemini_requires_api_key(self):
-        settings = _make_settings(GOOGLE_API_KEY="")
+        settings = _make_settings(google_api_key="")
         provider = GeminiProvider(settings)
         with pytest.raises(ValueError, match="API key"):
             provider.validate_config()
 
     def test_azure_requires_api_key(self):
-        settings = _make_settings(AZURE_OPENAI_API_KEY="")
+        settings = _make_settings(azure_openai_api_key="")
         provider = AzureProvider(settings)
         with pytest.raises(ValueError, match="API key"):
             provider.validate_config()
 
     def test_azure_requires_endpoint(self):
         settings = _make_settings(
-            AZURE_OPENAI_API_KEY="key",
-            AZURE_OPENAI_ENDPOINT="",
+            azure_openai_api_key="key",
+            azure_openai_endpoint="",
         )
         provider = AzureProvider(settings)
         with pytest.raises(ValueError, match="endpoint"):
@@ -93,9 +93,9 @@ class TestProviderValidation:
 
     def test_azure_requires_deployment(self):
         settings = _make_settings(
-            AZURE_OPENAI_API_KEY="key",
-            AZURE_OPENAI_ENDPOINT="https://example.openai.azure.com",
-            AZURE_OPENAI_DEPLOYMENT="",
+            azure_openai_api_key="key",
+            azure_openai_endpoint="https://example.openai.azure.com",
+            azure_openai_deployment="",
         )
         provider = AzureProvider(settings)
         with pytest.raises(ValueError, match="deployment"):

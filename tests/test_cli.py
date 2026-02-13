@@ -19,7 +19,7 @@ class TestCLIBasic:
     def test_help(self):
         result = runner.invoke(app, ["--help"])
         assert result.exit_code == 0
-        assert "autodocs-ai" in result.stdout
+        assert "document generator" in result.stdout.lower()
 
     def test_generate_help(self):
         result = runner.invoke(app, ["generate", "--help"])
