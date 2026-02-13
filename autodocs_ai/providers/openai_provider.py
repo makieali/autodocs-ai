@@ -39,7 +39,7 @@ class OpenAIProvider(AIProvider):
                 {"role": "developer", "content": system_prompt},
                 {"role": "user", "content": user_prompt},
             ],
-            max_tokens=self.settings.max_tokens,
+            max_completion_tokens=self.settings.max_tokens,
         )
         choice = response.choices[0]
         usage = None
