@@ -1,0 +1,16 @@
+services:
+  autodocs-ai:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./output:/output
+    env_file:
+      - ../.env
+    environment:
+      - AUTODOCS_OUTPUT_DIR=/output
+      - AUTODOCS_API_HOST=0.0.0.0
+      - AUTODOCS_API_PORT=8000
+    restart: unless-stopped
